@@ -1,0 +1,1390 @@
+Introduce matricula: 2025-1410
+Matrícula: 2025-1410
+Routers: 7 (+1 ISP)
+Switches: 8
+VLANs: 15
+Hosts: 45
+
+/////////////////////ISP
+
+en
+conf t
+hostname ISP
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+interf range g0/0/0-2
+sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.1 255.255.255.252
+no sh
+
+ip route 14.10.0.0 255.255.0.0 14.10.2.2
+
+exit
+
+/////////////////////R1
+
+en
+conf t
+hostname R1
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+ip route 0.0.0.0 0.0.0.0 14.10.2.1
+
+access-list 1 permit 14.10.0.0 0.0.255.255
+ip nat inside source list 1 interface gigabitEthernet0/0/0 overload
+
+
+
+interf range g0/0/0-2
+sh
+
+interf range s0/1/0-1
+sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.2 255.255.255.252
+ip nat outside
+no sh
+exit
+
+interf s0/1/0
+ip address 14.10.2.5 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a0
+ip nat inside
+no sh
+exit
+
+interf s0/1/1
+ip address 14.10.2.9 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a0
+ip nat inside
+no sh
+exit
+
+
+ip dhcp excluded-address 14.10.1.1
+ip dhcp excluded-address 14.10.1.9
+ip dhcp excluded-address 14.10.1.17
+ip dhcp excluded-address 14.10.1.25
+ip dhcp excluded-address 14.10.1.33
+ip dhcp excluded-address 14.10.1.41
+ip dhcp excluded-address 14.10.1.49
+ip dhcp excluded-address 14.10.1.57
+ip dhcp excluded-address 14.10.1.65
+ip dhcp excluded-address 14.10.1.73
+ip dhcp excluded-address 14.10.1.81
+ip dhcp excluded-address 14.10.1.89
+ip dhcp excluded-address 14.10.1.97
+ip dhcp excluded-address 14.10.1.105
+ip dhcp excluded-address 14.10.1.113
+
+ip dhcp pool vlan10
+network 14.10.1.0 255.255.255.248
+default-router 14.10.1.1
+exit
+
+ip dhcp pool vlan20
+network 14.10.1.8 255.255.255.248
+default-router 14.10.1.9
+exit
+
+ip dhcp pool vlan30
+network 14.10.1.16 255.255.255.248
+default-router 14.10.1.17
+exit
+
+ip dhcp pool vlan40
+network 14.10.1.24 255.255.255.248
+default-router 14.10.1.25
+exit
+
+ip dhcp pool vlan50
+network 14.10.1.32 255.255.255.248
+default-router 14.10.1.33
+exit
+
+ip dhcp pool vlan60
+network 14.10.1.40 255.255.255.248
+default-router 14.10.1.41
+exit
+
+ip dhcp pool vlan70
+network 14.10.1.48 255.255.255.248
+default-router 14.10.1.49
+exit
+
+ip dhcp pool vlan80
+network 14.10.1.56 255.255.255.248
+default-router 14.10.1.57
+exit
+
+ip dhcp pool vlan90
+network 14.10.1.64 255.255.255.248
+default-router 14.10.1.65
+exit
+
+ip dhcp pool vlan100
+network 14.10.1.72 255.255.255.248
+default-router 14.10.1.73
+exit
+
+ip dhcp pool vlan110
+network 14.10.1.80 255.255.255.248
+default-router 14.10.1.81
+exit
+
+ip dhcp pool vlan120
+network 14.10.1.88 255.255.255.248
+default-router 14.10.1.89
+exit
+
+ip dhcp pool vlan130
+network 14.10.1.96 255.255.255.248
+default-router 14.10.1.97
+exit
+
+ip dhcp pool vlan140
+network 14.10.1.104 255.255.255.248
+default-router 14.10.1.105
+exit
+
+ip dhcp pool vlan150
+network 14.10.1.112 255.255.255.248
+default-router 14.10.1.113
+exit
+
+router ospf 1
+router-id 1.1.1.1
+
+network 14.10.4.0 0.0.0.7 area 0
+
+network 14.10.2.4 0.0.0.3 area 0
+network 14.10.2.8 0.0.0.3 area 0
+
+passive-interface default
+no passive-interface s0/1/0
+no passive-interface s0/1/1
+
+default-information originate
+
+area 0 authentication message-digest
+
+exit
+
+
+/////////////////////R2
+
+en
+conf t
+hostname R2
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+interf range g0/0/0-2
+sh
+exit
+
+interf s0/2/0
+ip address 14.10.2.6 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a0
+no sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.13 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a10
+no sh
+exit
+
+interf g0/0/1
+ip address 14.10.2.17 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a10
+no sh
+exit
+
+interf loopback 0
+ip address 14.10.4.41 255.255.255.252
+description ADMINISTRACION
+exit
+
+router ospf 1
+router-id 2.2.2.2
+
+network 14.10.4.40 0.0.0.7 area 0
+
+network 14.10.2.4 0.0.0.3 area 0
+network 14.10.2.12 0.0.0.3 area 10
+network 14.10.2.16 0.0.0.3 area 10
+
+passive-interface default
+no passive-interface s0/2/0
+no passive-interface g0/0/0
+no passive-interface g0/0/1
+
+area 0 authentication message-digest
+area 10 authentication message-digest
+
+exit
+
+/////////////////////R4
+
+en
+conf t
+hostname R4
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+interf range g0/0/0-2
+sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.14 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a10
+no sh
+exit
+
+interf g0/0/1
+no sh
+exit
+
+interf g0/0/1.10
+encapsulation dot1q 10
+ip address 14.10.1.1 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.20
+encapsulation dot1q 20
+ip address 14.10.1.9 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.30
+encapsulation dot1q 30
+ip address 14.10.1.17 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.40
+encapsulation dot1q 40
+ip address 14.10.1.25 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.99
+description Administrativa
+encapsulation dot1q 99
+ip address 14.10.4.9 255.255.255.248
+exit
+
+interf g0/0/1.999
+description Nativa
+encapsulation dot1Q 999 native
+exit
+
+
+router ospf 1
+router-id 4.4.4.4
+
+network 14.10.4.8 0.0.0.7 area 10
+
+network 14.10.2.12 0.0.0.3 area 10
+
+network 14.10.1.0 0.0.0.7 area 10
+network 14.10.1.8 0.0.0.7 area 10
+network 14.10.1.16 0.0.0.7 area 10
+network 14.10.1.24 0.0.0.7 area 10
+
+passive-interface default
+no passive-interface g0/0/0
+
+area 10 authentication message-digest
+
+exit
+
+
+/////////////////////R5
+
+en
+conf t
+hostname R5
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+interf range g0/0/0-2
+sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.18 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a10
+no sh
+exit
+
+interf g0/0/1
+no sh
+exit
+
+interf g0/0/1.50
+encapsulation dot1q 50
+ip address 14.10.1.33 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.60
+encapsulation dot1q 60
+ip address 14.10.1.41 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.70
+encapsulation dot1q 70
+ip address 14.10.1.49 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.80
+encapsulation dot1q 80
+ip address 14.10.1.57 255.255.255.248
+ip helper-address 14.10.2.5
+exit
+
+interf g0/0/1.99
+description Administrativa
+encapsulation dot1q 99
+ip address 14.10.4.17 255.255.255.248
+exit
+
+interf g0/0/1.999
+description Nativa
+encapsulation dot1Q 999 native
+exit
+
+
+
+router ospf 1
+router-id 5.5.5.5
+
+network 14.10.4.16 0.0.0.7 area 10
+
+network 14.10.2.16 0.0.0.3 area 10
+
+network 14.10.1.32 0.0.0.7 area 10
+network 14.10.1.40 0.0.0.7 area 10
+network 14.10.1.48 0.0.0.7 area 10
+network 14.10.1.56 0.0.0.7 area 10
+
+passive-interface default
+no passive-interface g0/0/0
+
+area 10 authentication message-digest
+
+exit
+
+
+
+/////////////////////R3
+
+en
+conf t
+hostname R3
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+interf range g0/0/0-2
+sh
+exit
+
+interf s0/2/0
+ip address 14.10.2.10 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a0
+no sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.21 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a20
+no sh
+exit
+
+interf g0/0/1
+ip address 14.10.2.25 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a020
+no sh
+exit
+
+interf loopback 0
+ip address 14.10.4.49 255.255.255.252
+description ADMINISTRACION
+exit
+
+
+router ospf 1
+router-id 3.3.3.3
+
+network 14.10.4.48 0.0.0.7 area 0
+
+network 14.10.2.8 0.0.0.3 area 0
+network 14.10.2.20 0.0.0.3 area 20
+network 14.10.2.24 0.0.0.3 area 20
+
+passive-interface default
+no passive-interface s0/2/0
+no passive-interface g0/0/0
+no passive-interface g0/0/1
+
+area 0 authentication message-digest
+area 20 authentication message-digest
+
+exit
+
+
+/////////////////////R6
+
+en
+conf t
+hostname R6
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+interf range g0/0/0-2
+sh
+
+interf range g0/1/0-3
+sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.22 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a20
+no sh
+exit
+
+interf g0/0/1
+no sh
+exit
+
+interf g0/0/1.90
+encapsulation dot1q 90
+ip address 14.10.1.65 255.255.255.248
+ip helper-address 14.10.2.9
+exit
+
+interf g0/0/1.100
+encapsulation dot1q 100
+ip address 14.10.1.73 255.255.255.248
+ip helper-address 14.10.2.9
+exit
+
+interf g0/0/1.110
+encapsulation dot1q 110
+ip address 14.10.1.81 255.255.255.248
+ip helper-address 14.10.2.9
+exit
+
+interf g0/0/1.120
+encapsulation dot1q 120
+ip address 14.10.1.89 255.255.255.248
+ip helper-address 14.10.2.9
+exit
+
+interf g0/0/1.99
+description Administrativa
+encapsulation dot1q 99
+ip address 14.10.4.25 255.255.255.248
+exit
+
+interf g0/0/1.999
+description Nativa
+encapsulation dot1Q 999 native
+exit
+
+
+router ospf 1
+router-id 6.6.6.6
+
+network 14.10.4.24 0.0.0.7 area 20
+
+network 14.10.2.20 0.0.0.3 area 20
+
+network 14.10.1.64 0.0.0.7 area 20
+network 14.10.1.72 0.0.0.7 area 20
+network 14.10.1.80 0.0.0.7 area 20
+network 14.10.1.88 0.0.0.7 area 20
+
+passive-interface default
+no passive-interface g0/0/0
+
+area 20 authentication message-digest
+
+exit
+
+/////////////////////R7
+
+en
+conf t
+hostname R7
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+interf range g0/0/0-2
+sh
+exit
+
+interf g0/0/0
+ip address 14.10.2.26 255.255.255.252
+ip ospf message-digest-key 1 md5 M1chAr3a20
+no sh
+exit
+
+
+interf g0/0/1
+no sh
+exit
+
+interf g0/0/1.130
+encapsulation dot1q 130
+ip address 14.10.1.97 255.255.255.248
+ip helper-address 14.10.2.9
+exit
+
+interf g0/0/1.140
+encapsulation dot1q 140
+ip address 14.10.1.105 255.255.255.248
+ip helper-address 14.10.2.9
+exit
+
+interf g0/0/1.150
+encapsulation dot1q 150
+ip address 14.10.1.113 255.255.255.248
+ip helper-address 14.10.2.9
+exit
+
+interf g0/0/1.99
+description Administrativa
+encapsulation dot1q 99
+ip address 14.10.4.33 255.255.255.248
+exit
+
+interf g0/0/1.999
+description Nativa
+encapsulation dot1Q 999 native
+exit
+
+
+router ospf 1
+router-id 7.7.7.7
+
+network 14.10.4.32 0.0.0.7 area 20
+
+network 14.10.2.24 0.0.0.3 area 20
+
+network 14.10.1.96 0.0.0.7 area 20
+network 14.10.1.104 0.0.0.7 area 20
+network 14.10.1.112 0.0.0.7 area 20
+
+passive-interface default
+no passive-interface g0/0/0
+
+area 20 authentication message-digest
+
+exit
+
+
+//////////////////////////////////////////////Switches
+
+///////////////SW1
+
+en
+conf t
+hostname SW1
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+interface vlan 99
+ip address 14.10.4.10 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.9
+
+interf g0/1
+switchport mode trunk
+switchport trunk native vlan 999
+no sh
+exit
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,40,99,999
+exit
+
+
+///////////////SW2
+
+en
+conf t
+hostname SW2
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+
+interface vlan 99
+ip address 14.10.4.11 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.9
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10,20,30,40,99,999
+exit
+
+
+interf range f0/4-6
+switchport access vlan 10
+no sh
+exit
+
+interf range f0/7-9
+switchport access vlan 20
+no sh
+exit
+
+interf range f0/10-12
+switchport access vlan 30
+no sh
+exit
+
+interf range f0/13-15
+switchport access vlan 40
+no sh
+exit
+
+
+inter range f0/4-15
+switchport port-security
+switchport port-security maximum 2
+switchport port-security violation shutdown
+switchport port-security mac-address sticky
+exit
+
+
+
+
+
+///////////////SW3
+
+en
+conf t
+hostname SW3
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+vlan 50
+vlan 60
+vlan 70
+vlan 80
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+interface vlan 99
+ip address 14.10.4.18 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.17
+
+interf g0/1
+switchport mode trunk
+switchport trunk native vlan 999
+no sh
+exit
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 50,60,70,80,99,999
+exit
+
+
+
+///////////////SW4
+
+en
+conf t
+hostname SW4
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+vlan 50
+vlan 60
+vlan 70
+vlan 80
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+interface vlan 99
+ip address 14.10.4.19 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.17
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 50,60,70,80,99,999
+exit
+
+interf range f0/4-6
+switchport access vlan 50
+no sh
+exit
+
+interf range f0/7-9
+switchport access vlan 60
+no sh
+exit
+
+interf range f0/10-12
+switchport access vlan 70
+no sh
+exit
+
+interf range f0/13-15
+switchport access vlan 80
+no sh
+exit
+
+
+inter range f0/4-15
+switchport port-security
+switchport port-security maximum 2
+switchport port-security violation shutdown
+switchport port-security mac-address sticky
+exit
+
+
+
+///////////////SW5
+
+en
+conf t
+hostname SW5
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+vlan 90
+vlan 100
+vlan 110
+vlan 120
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+interface vlan 99
+ip address 14.10.4.26 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.25
+
+interf g0/1
+switchport mode trunk
+switchport trunk native vlan 999
+no sh
+exit
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 90,100,110,120,99,999
+exit
+
+
+
+///////////////SW6
+
+en
+conf t
+hostname SW6
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+vlan 90
+vlan 100
+vlan 110
+vlan 120
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+interface vlan 99
+ip address 14.10.4.27 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.25
+
+interf g0/1
+switchport mode trunk
+switchport trunk native vlan 999
+no sh
+exit
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 90,100,110,120,99,999
+exit
+
+
+interf range f0/4-6
+switchport access vlan 90
+no sh
+exit
+
+interf range f0/7-9
+switchport access vlan 100
+no sh
+exit
+
+interf range f0/10-12
+switchport access vlan 110
+no sh
+exit
+
+interf range f0/13-15
+switchport access vlan 120
+no sh
+exit
+
+
+
+inter range f0/4-15
+switchport port-security
+switchport port-security maximum 2
+switchport port-security violation shutdown
+switchport port-security mac-address sticky
+exit
+
+
+///////////////SW7
+
+en
+conf t
+hostname SW7
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+vlan 130
+vlan 140
+vlan 150
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+interface vlan 99
+ip address 14.10.4.34 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.33
+
+interf g0/1
+switchport mode trunk
+switchport trunk native vlan 999
+no sh
+exit
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 130,140,150,99,999
+exit
+
+
+
+///////////////SW8
+
+en
+conf t
+hostname SW8
+
+banner motd "El acceso no autorizado esta extrictamente prohibido"
+
+
+no ip domain-lookup
+
+username admin secret 0c3an0##
+enable secret 0c3an0##
+
+line vty 0 4
+login local
+transport input ssh
+exec-timeout 5 0
+exit
+
+ip domain-name tarea.local
+crypto key generate rsa
+1024
+ip ssh version 2
+
+
+
+vlan 130
+vlan 140
+vlan 150
+
+vlan 99
+name Administrativa
+
+vlan 999
+
+vlan 1000
+name NO_USAR
+exit
+
+interf range f0/4-24
+switchport mode access
+switchport access vlan 1000
+sh
+exit
+
+interface vlan 99
+ip address 14.10.4.35 255.255.255.248
+no sh
+exit
+
+ip default-gateway 14.10.4.33
+
+interf range f0/1-3
+channel-group 1 mode active
+exit
+
+interf port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 130,140,150,99,999
+exit
+
+
+interf range f0/4-6
+switchport access vlan 130
+no sh
+exit
+
+interf range f0/7-9
+switchport access vlan 140
+no sh
+exit
+
+interf range f0/10-12
+switchport access vlan 150
+no sh
+exit
+
+
+inter range f0/4-12
+switchport port-security
+switchport port-security maximum 2
+switchport port-security violation shutdown
+switchport port-security mac-address sticky
+exit
